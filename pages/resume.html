@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tanner Allred | Sports Communications</title>
+
+<style>
+:root{
+    --navy:#002E5D;
+    --navy-light:#004B8D;
+    --white:#ffffff;
+    --gray:#f5f7fa;
+    --dark:#1f2937;
+    --accent:#0F6CBD;
+    --gold:#D4AF37;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: "Segoe UI", sans-serif;
+    line-height:1.7;
+    color:var(--dark);
+    background:white;
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+}
+
+nav{
+    background:var(--navy);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+nav .container{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 0;
+}
+
+.logo{
+    color:white;
+    font-size:1.4rem;
+    font-weight:700;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    font-weight:500;
+}
+
+.hero{
+    background:linear-gradient(135deg,var(--navy),var(--navy-light));
+    color:white;
+    min-height:90vh;
+    display:flex;
+    align-items:center;
+}
+
+.hero-content{
+    max-width:850px;
+}
+
+.hero h1{
+    font-size:4rem;
+    line-height:1.1;
+    margin-bottom:20px;
+}
+
+.hero h2{
+    font-weight:400;
+    margin-bottom:30px;
+    color:#dbeafe;
+}
+
+.hero p{
+    font-size:1.2rem;
+    margin-bottom:40px;
+}
+
+.btn{
+    display:inline-block;
+    background:white;
+    color:var(--navy);
+    padding:14px 30px;
+    border-radius:6px;
+    text-decoration:none;
+    font-weight:700;
+    margin-right:15px;
+}
+
+.btn-outline{
+    border:2px solid white;
+    color:white;
+    background:transparent;
+}
+
+section{
+    padding:90px 0;
+}
+
+.section-title{
+    font-size:2.5rem;
+    color:var(--navy);
+    margin-bottom:20px;
+}
+
+.section-subtitle{
+    color:#666;
+    margin-bottom:50px;
+}
+
+.about{
+    background:var(--gray);
+}
+
+.about-text{
+    max-width:900px;
+    font-size:1.1rem;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.card h3{
+    color:var(--navy);
+    margin-bottom:15px;
+}
+
+.timeline-item{
+    border-left:4px solid var(--navy);
+    padding-left:25px;
+    margin-bottom:40px;
+}
+
+.timeline-item h3{
+    color:var(--navy);
+}
+
+.timeline-item span{
+    color:#666;
+    font-weight:600;
+}
+
+.skills{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.skill-box{
+    background:var(--gray);
+    padding:25px;
+    border-radius:10px;
+}
+
+.quote{
+    background:var(--navy);
+    color:white;
+    text-align:center;
+}
+
+.quote p{
+    font-size:1.8rem;
+    max-width:900px;
+    margin:auto;
+    font-style:italic;
+}
+
+.contact{
+    text-align:center;
+}
+
+.contact-links{
+    margin-top:30px;
+}
+
+.contact-links a{
+    display:inline-block;
+    margin:10px;
+    color:white;
+    background:var(--navy);
+    text-decoration:none;
+    padding:14px 24px;
+    border-radius:6px;
+}
+
+footer{
+    background:#0f172a;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+@media(max-width:768px){
+
+.hero h1{
+    font-size:2.8rem;
+}
+
+.nav-links{
+    display:none;
+}
+
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="container">
+        <div class="logo">Tanner Allred</div>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+
+    <img src="../images/headshot.jpeg" alt="Tanner Allred"
+         style="
+            width:400px;
+        height:auto;
+        border-radius:18px;
+        border:5px solid white;
+        box-shadow:0 20px 40px rgba(0,0,0,.35);
+        margin-bottom:35px;
+        display:block;
+        margin-left:auto;
+        margin-right:auto;
+         ">
+
+    <h1>Sports Communication.<br>Stories That Matter.</h1>
+
+
+
+            <h2>Public Relations Student • Researcher • Communicator • Future Sports Communications Professional</h2>
+
+            <p>
+                I believe sports are a microcosm of the human condition. They are where achievement,
+                sacrifice, leadership, adversity, teamwork, and legacy intersect. Every athlete,
+                organization, and fan has a story worth telling. My goal is to help organizations,
+                athletes, and brands communicate those stories in ways that inspire, connect, and create impact.
+            </p>
+
+            <a href="#contact" class="btn">Connect With Me</a>
+            <a href="https://www.linkedin.com/in/tanner-allred" class="btn btn-outline">LinkedIn</a>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="about">
+    <div class="container">
+
+        <h2 class="section-title">Why Sports Communications?</h2>
+
+        <div class="about-text">
+            <p>
+                Sports have always represented more than wins and losses to me. They reveal character,
+                resilience, leadership, and the pursuit of excellence. Whether it's an athlete overcoming
+                adversity, a team building a lasting culture, or a community rallying behind a shared identity,
+                sports provide some of the most compelling stories in the world.
+            </p>
+
+            <br>
+
+            <p>
+                As a Public Relations student at Brigham Young University, I am developing the strategic
+                communication, research, leadership, and relationship-building skills necessary to help
+                organizations tell those stories effectively. My experiences in campaign strategy, audience
+                research, leadership development, language instruction, and international service have taught
+                me how to connect with diverse audiences and communicate with purpose.
+            </p>
+
+            <br>
+
+            <p>
+                My long-term goal is to build a career in sports communications, public relations,
+                media relations, athlete representation, or organizational communications where I can help
+                shape narratives that inspire fans, strengthen brands, and elevate the people behind the game.
+            </p>
+
+        </div>
+
+    </div>
+</section>
+
+<section>
+    <div class="container">
+
+        <h2 class="section-title">What I Bring</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Strategic Communication</h3>
+                <p>
+                    Experience developing messaging, conducting audience research,
+                    analyzing data, and creating communication strategies through
+                    national-level campaign work.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Leadership</h3>
+                <p>
+                    Led and trained teams across multiple environments, including
+                    supervising more than 170 individuals and coordinating
+                    large-scale initiatives serving thousands.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Research & Analytics</h3>
+                <p>
+                    Collected and analyzed hundreds of survey responses and
+                    qualitative interviews to uncover audience insights and
+                    strengthen communication campaigns.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Relationship Building</h3>
+                <p>
+                    Proven ability to connect with people from diverse backgrounds,
+                    cultures, and perspectives through communication, mentorship,
+                    and collaborative leadership.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Global Perspective</h3>
+                <p>
+                    Fluent in Czech and Slovak with extensive international
+                    leadership experience throughout Central Europe.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Sports Mindset</h3>
+                <p>
+                    Lifelong competitor and sports enthusiast with deep appreciation
+                    for the stories, traditions, and culture that make sports meaningful.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<section id="experience">
+    <div class="container">
+
+        <h2 class="section-title">Experience</h2>
+
+        <div class="timeline-item">
+            <h3>Bateman Case Competition — Campaign Strategist, Lead Writer & Researcher</h3>
+            <span>2025 – Present</span>
+            <p>
+                Conducted large-scale audience research, analyzed 600+ survey responses,
+                performed in-depth interviews, and developed strategic recommendations
+                for a national client campaign while coordinating a six-member team.
+            </p>
+        </div>
+
+        <div class="timeline-item">
+            <h3>BYU PRSSA — Cohort Representative</h3>
+            <span>2025 – Present</span>
+            <p>
+                Led communications efforts for a 55-member cohort, increased active
+                membership, and helped drive engagement and event participation
+                through strategic outreach.
+            </p>
+        </div>
+
+        <div class="timeline-item">
+            <h3>Brigham Young University — Research Assistant</h3>
+            <span>2024</span>
+            <p>
+                Supported faculty research initiatives through data collection,
+                analysis, and AI-related research, helping improve research efficiency
+                and explore emerging communication technologies.
+            </p>
+        </div>
+
+        <div class="timeline-item">
+            <h3>Leadership Service — Czech Republic & Slovakia</h3>
+            <span>2021 – 2023</span>
+            <p>
+                Trained and supervised more than 170 individuals, organized large-scale
+                community service initiatives, and developed leadership skills through
+                cross-cultural communication and team development.
+            </p>
+        </div>
+
+        <div class="timeline-item">
+            <h3>Missionary Training Center — Czech & Slovak Tutor</h3>
+            <span>2024 – Present</span>
+            <p>
+                Teach language and communication skills through personalized coaching,
+                curriculum development, and immersive learning experiences.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<section id="skills">
+    <div class="container">
+
+        <h2 class="section-title">Core Skills</h2>
+
+        <div class="skills">
+
+            <div class="skill-box">
+                <h3>Public Relations</h3>
+                Strategic Communication<br>
+                Media Relations<br>
+                Campaign Planning<br>
+                Message Development
+            </div>
+
+            <div class="skill-box">
+                <h3>Research</h3>
+                Survey Design<br>
+                Audience Analysis<br>
+                Data Interpretation<br>
+                Qualitative Interviews
+            </div>
+
+            <div class="skill-box">
+                <h3>Leadership</h3>
+                Team Management<br>
+                Training & Development<br>
+                Project Coordination<br>
+                Public Speaking
+            </div>
+
+            <div class="skill-box">
+                <h3>Languages</h3>
+                English<br>
+                Czech (Fluent)<br>
+                Slovak (Fluent)
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="quote">
+    <div class="container">
+        <p>
+            "Sports are where achievement, legacy, hard work, and human potential
+            converge. The stories behind those moments are what inspire me."
+        </p>
+    </div>
+</section>
+
+<section id="contact" class="contact">
+    <div class="container">
+
+        <h2 class="section-title">Let's Connect</h2>
+
+        <p>
+            I'm actively pursuing opportunities in sports communications,
+            public relations, media relations, and strategic communications.
+        </p>
+
+        <div class="contact-links">
+            <a href="mailto:tanner.allred19@gmail.com">Email Me</a>
+            <a href="tel:8013617882">Call Me</a>
+            <a href="https://www.linkedin.com/in/tanner-allred">LinkedIn</a>
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    © 2026 Tanner Allred | Sports Communications & Public Relations
+</footer>
+
+</body>
+</html>

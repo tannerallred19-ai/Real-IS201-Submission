@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tron V2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-2: #0a1022;
+      --panel: rgba(11, 18, 39, 0.88);
+      --panel-2: rgba(18, 28, 59, 0.74);
+      --line: rgba(92, 222, 255, 0.22);
+      --line-strong: rgba(92, 222, 255, 0.55);
+      --text: #e6f7ff;
+      --muted: #90abc2;
+      --cyan: #5ce8ff;
+      --blue: #57a7ff;
+      --gold: #ffd966;
+      --orange: #ff9f43;
+      --green: #72f1a6;
+      --red: #ff5c8a;
+      --violet: #9a7cff;
+      --shadow: 0 0 20px rgba(92, 232, 255, 0.15), 0 0 40px rgba(87, 167, 255, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(87,167,255,0.16), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(154,124,255,0.14), transparent 30%),
+        linear-gradient(180deg, #040611 0%, #07101f 50%, #040611 100%);
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      height: 100vh;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .arena-wrap, .hud {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .arena-wrap::before, .hud::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent 30%, transparent 70%, rgba(92,232,255,0.04));
+      pointer-events: none;
+    }
+
+    .arena-top {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      right: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: Orbitron, sans-serif;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .brand svg {
+      width: 34px;
+      height: 34px;
+      color: var(--cyan);
+      filter: drop-shadow(0 0 10px rgba(92,232,255,0.45));
+    }
+
+    .status-banner {
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: rgba(6, 20, 36, 0.72);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      box-shadow: inset 0 0 20px rgba(92, 232, 255, 0.06);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
+        linear-gradient(90deg, rgba(92,232,255,0.04) 1px, transparent 1px),
+        linear-gradient(rgba(92,232,255,0.04) 1px, transparent 1px),
+        linear-gradient(180deg, #06101f 0%, #070d19 100%);
+      background-size: auto, 28px 28px, 28px 28px, auto;
+      border-radius: var(--radius);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(2, 6, 16, 0.12), rgba(2, 6, 16, 0.55));
+      text-align: center;
+      z-index: 3;
+      transition: opacity 180ms ease;
+    }
+
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+
+    .overlay-card {
+      width: min(560px, 100%);
+      padding: 28px;
+      border-radius: 28px;
+      border: 1px solid rgba(92, 232, 255, 0.28);
+      background: linear-gradient(180deg, rgba(9, 20, 42, 0.96), rgba(6, 14, 28, 0.94));
+      box-shadow: 0 0 30px rgba(87, 167, 255, 0.12), inset 0 0 30px rgba(92, 232, 255, 0.05);
+    }
+
+    .eyebrow {
+      font-family: Orbitron, sans-serif;
+      color: var(--cyan);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-family: Orbitron, sans-serif;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      line-height: 1;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .overlay p {
+      margin: 0 auto 18px;
+      max-width: 44ch;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(92, 232, 255, 0.18);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .chip svg { width: 14px; height: 14px; }
+
+    .hud {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hud-title {
+      font-family: Orbitron, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .score-block {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      background: var(--panel-2);
+      box-shadow: inset 0 0 24px rgba(92,232,255,0.04);
+    }
+
+    .score-value {
+      font-family: Orbitron, sans-serif;
+      font-size: clamp(2.8rem, 9vw, 4.8rem);
+      line-height: 0.95;
+      color: var(--cyan);
+      text-shadow: 0 0 14px rgba(92,232,255,0.45);
+    }
+
+    .score-caption {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .stat .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-family: Orbitron, sans-serif;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+
+    .legend {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .legend-item {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .icon-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+    }
+
+    .icon-badge svg { width: 16px; height: 16px; }
+
+    .footer-note {
+      margin-top: auto;
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .accent { color: var(--cyan); }
+    .gold { color: var(--gold); }
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+
+    @media (max-width: 960px) {
+      .shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+        height: 100dvh;
+      }
+      .hud {
+        max-height: 40dvh;
+        overflow: auto;
+      }
+      .score-value { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <main class="arena-wrap">
+      <div class="arena-top">
+        <div class="brand" aria-label="Tron V2 logo">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M10 16h44" opacity="0.55"></path>
+            <path d="M14 20l18 26 18-26"></path>
+            <path d="M32 46V20"></path>
+          </svg>
+          <span>Tron V2 // Arena 5000</span>
+        </div>
+        <div class="status-banner" id="banner">Press Space to deploy</div>
+      </div>
+      <canvas id="game" width="980" height="720" aria-label="Tron game arena"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="overlay-card">
+          <div class="eyebrow">Neon lightcycle combat</div>
+          <h1>Tron V2</h1>
+          <p>Survive the grid, cut off rival riders, and reach 100 points. You earn 1 point every 3 seconds, difficulty rises every 2 kills, and new enemies join on both 12-second and 15-second waves.</p>
+          <div class="chip-row">
+            <div class="chip">Arrows / WASD steer</div>
+            <div class="chip">Space starts</div>
+            <div class="chip">R resets</div>
+            <div class="chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"></path></svg>
+              Shield = 10s invulnerable
+            </div>
+            <div class="chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="7"></circle><path d="M12 13V9"></path><path d="M12 13l3 2"></path><path d="M9 3h6"></path></svg>
+              Clock = 10s slow field
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="hud">
+      <div>
+        <div class="hud-title">Scoreboard</div>
+        <div class="score-block">
+          <div class="score-value" id="score">0</div>
+          <div class="score-caption">Reach <span class="accent">100</span> to win. You gain <span class="accent">1 point</span> every 3 seconds while alive.</div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="label">Kills</div><div class="value" id="kills">0</div></div>
+        <div class="stat"><div class="label">Speed tier</div><div class="value" id="speedTier">1</div></div>
+        <div class="stat"><div class="label">Riders alive</div><div class="value" id="ridersAlive">0</div></div>
+        <div class="stat"><div class="label">Base speed</div><div class="value" id="baseSpeed">1.00x</div></div>
+        <div class="stat"><div class="label">12s spawn</div><div class="value" id="spawn12">12.0s</div></div>
+        <div class="stat"><div class="label">15s spawn</div><div class="value" id="spawn15">15.0s</div></div>
+        <div class="stat"><div class="label">Shield time</div><div class="value" id="shieldTime">0.0s</div></div>
+        <div class="stat"><div class="label">Slow time</div><div class="value" id="slowTime">0.0s</div></div>
+      </div>
+
+      <div>
+        <div class="hud-title">Power systems</div>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="icon-badge green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"></path></svg>
+            </div>
+            <div>Shield icon grants 10 seconds of invulnerability. Bots can take it too.</div>
+          </div>
+          <div class="legend-item">
+            <div class="icon-badge gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="7"></circle><path d="M12 13V9"></path><path d="M12 13l3 2"></path><path d="M9 3h6"></path></svg>
+            </div>
+            <div>Clock icon slows the arena for 10 seconds and resets pressure for everyone.</div>
+          </div>
+          <div class="legend-item">
+            <div class="icon-badge red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+            </div>
+            <div>You die on borders, enemy trails, and your own trail unless a shield is active.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Cut riders off by forcing them into trails or walls. The arena gets faster every <span class="accent">2 kills</span>, and reinforcements arrive on <span class="accent">12s</span> and <span class="accent">15s</span> cycles. Inspired by classic canvas-based Tron browser builds and sci-fi HUD concepts. [web:7][web:9][web:12]
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('overlay');
+    const banner = document.getElementById('banner');
+
+    const UI = {
+      score: document.getElementById('score'),
+      kills: document.getElementById('kills'),
+      speedTier: document.getElementById('speedTier'),
+      baseSpeed: document.getElementById('baseSpeed'),
+      ridersAlive: document.getElementById('ridersAlive'),
+      spawn12: document.getElementById('spawn12'),
+      spawn15: document.getElementById('spawn15'),
+      shieldTime: document.getElementById('shieldTime'),
+      slowTime: document.getElementById('slowTime')
+    };
+
+    const CELL = 8;
+    const W = Math.floor(canvas.width / CELL);
+    const H = Math.floor(canvas.height / CELL);
+    const WIN_SCORE = 100;
+    const SCORE_INTERVAL = 3000;
+    const SHIELD_MS = 10000;
+    const SLOW_MS = 10000;
+    const SPAWN_12 = 12000;
+    const SPAWN_15 = 15000;
+    const BASE_STEP = 122;
+    const STEP_DELTA = 8;
+    const COLORS = ['#ff5c8a', '#57a7ff', '#ffd966', '#72f1a6', '#9a7cff', '#ff9f43', '#4df0ff'];
+    const DIRS = {
+      up: {x:0,y:-1},
+      down: {x:0,y:1},
+      left: {x:-1,y:0},
+      right: {x:1,y:0}
+    };
+
+    let state;
+    let trailMap;
+    let particles = [];
+    let lastFrame = 0;
+
+    function resetState() {
+      trailMap = Array.from({ length: W }, () => Array(H).fill(null));
+      particles = [];
+      state = {
+        running: false,
+        ended: false,
+        won: false,
+        score: 0,
+        kills: 0,
+        riders: [],
+        lastScoreAt: performance.now(),
+        nextSpawn12At: performance.now() + SPAWN_12,
+        nextSpawn15At: performance.now() + SPAWN_15,
+        slowUntil: 0,
+        nextPowerAt: performance.now() + 4200,
+        powerUps: [],
+        message: 'Press Space to deploy'
+      };
+      spawnPlayer();
+      for (let i = 0; i < 2; i++) spawnBot();
+      updateUI(performance.now());
+      overlay.classList.remove('hidden');
+      banner.textContent = state.message;
+    }
+
+    function baseStepMs() {
+      const tier = Math.floor(state.kills / 2);
+      return Math.max(44, BASE_STEP - tier * STEP_DELTA);
+    }
+
+    function effectiveStepMs() {
+      const slow = performance.now() < state.slowUntil;
+      return baseStepMs() * (slow ? 1.45 : 1);
+    }
+
+    function randomOpenCell(margin = 8) {
+      for (let tries = 0; tries < 500; tries++) {
+        const x = Math.floor(Math.random() * (W - margin * 2)) + margin;
+        const y = Math.floor(Math.random() * (H - margin * 2)) + margin;
+        if (!trailMap[x][y] && !state.powerUps.some(p => p.x === x && p.y === y)) return { x, y };
+      }
+      return { x: Math.floor(W / 2), y: Math.floor(H / 2) };
+    }
+
+    function spawnPlayer() {
+      const pos = { x: Math.floor(W * 0.25), y: Math.floor(H * 0.5) };
+      const rider = makeRider('tron', '#5ce8ff', pos.x, pos.y, 'right', true);
+      state.playerId = rider.id;
+      state.riders.push(rider);
+    }
+
+    function spawnBot() {
+      const pos = randomOpenCell(10);
+      const dirs = ['up','down','left','right'];
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      state.riders.push(makeRider('bot', color, pos.x, pos.y, dirs[Math.floor(Math.random() * dirs.length)], false));
+    }
+
+    function makeRider(type, color, x, y, dir, isPlayer) {
+      return {
+        id: crypto.randomUUID(),
+        type,
+        color,
+        x,
+        y,
+        dir,
+        nextDir: dir,
+        alive: true,
+        isPlayer,
+        moveAt: performance.now() + 300,
+        shieldUntil: 0
+      };
+    }
+
+    function isOpposite(a, b) {
+      return (a === 'up' && b === 'down') || (a === 'down' && b === 'up') || (a === 'left' && b === 'right') || (a === 'right' && b === 'left');
+    }
+
+    function setPlayerDir(dir) {
+      const p = getPlayer();
+      if (!p || !p.alive) return;
+      if (!isOpposite(p.dir, dir)) p.nextDir = dir;
+    }
+
+    function getPlayer() {
+      return state.riders.find(r => r.id === state.playerId);
+    }
+
+    function aliveRiders() {
+      return state.riders.filter(r => r.alive);
+    }
+
+    function spawnPowerUp() {
+      if (state.powerUps.length >= 3) return;
+      const pos = randomOpenCell(6);
+      const type = Math.random() < 0.5 ? 'shield' : 'slow';
+      state.powerUps.push({ id: crypto.randomUUID(), type, x: pos.x, y: pos.y, bornAt: performance.now() });
+    }
+
+    function collectPowerUp(rider, power) {
+      if (power.type === 'shield') {
+        rider.shieldUntil = performance.now() + SHIELD_MS;
+        burst(power.x, power.y, rider.color, 18);
+      } else {
+        state.slowUntil = performance.now() + SLOW_MS;
+        burst(power.x, power.y, '#ffd966', 24);
+      }
+      state.powerUps = state.powerUps.filter(p => p.id !== power.id);
+    }
+
+    function killRider(rider, byId = null) {
+      if (!rider.alive) return;
+      rider.alive = false;
+      burst(rider.x, rider.y, rider.color, 28);
+      if (byId && byId === state.playerId && rider.id !== state.playerId) {
+        state.kills += 1;
+      }
+      if (rider.id === state.playerId) {
+        state.running = false;
+        state.ended = true;
+        state.won = false;
+        state.message = 'Tron eliminated // Press R to reset';
+        overlay.classList.remove('hidden');
+      }
+    }
+
+    function burst(cx, cy, color, count) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: cx * CELL + CELL / 2,
+          y: cy * CELL + CELL / 2,
+          vx: (Math.random() - 0.5) * 3.5,
+          vy: (Math.random() - 0.5) * 3.5,
+          life: 28 + Math.random() * 18,
+          color
+        });
+      }
+    }
+
+    function botChooseDir(bot) {
+      if (!bot.alive) return;
+      const options = ['up','down','left','right'].filter(d => !isOpposite(bot.dir, d));
+      const player = getPlayer();
+      const targetPower = nearestPower(bot);
+      const target = targetPower || (player && player.alive ? { x: player.x, y: player.y } : null);
+
+      let scored = options.map(dir => {
+        const step = DIRS[dir];
+        const nx = bot.x + step.x;
+        const ny = bot.y + step.y;
+        let score = evaluateCell(nx, ny, bot, 8);
+        if (target) {
+          const distNow = Math.abs(bot.x - target.x) + Math.abs(bot.y - target.y);
+          const distNext = Math.abs(nx - target.x) + Math.abs(ny - target.y);
+          score += (distNow - distNext) * (targetPower ? 3.2 : 1.1);
+        }
+        if (dir === bot.dir) score += 0.3;
+        score += Math.random() * 0.5;
+        return { dir, score };
+      });
+
+      scored.sort((a,b) => b.score - a.score);
+      bot.nextDir = scored[0].dir;
+    }
+
+    function nearestPower(rider) {
+      let best = null;
+      let bestD = Infinity;
+      for (const p of state.powerUps) {
+        const d = Math.abs(rider.x - p.x) + Math.abs(rider.y - p.y);
+        if (d < bestD) { bestD = d; best = p; }
+      }
+      return best;
+    }
+
+    function evaluateCell(x, y, rider, depth) {
+      if (x < 0 || x >= W || y < 0 || y >= H) return rider.shieldUntil > performance.now() ? 2 : -1000;
+      const occupied = trailMap[x][y];
+      if (occupied && rider.shieldUntil <= performance.now()) return -1000;
+      let open = 0;
+      const queue = [[x, y, 0]];
+      const seen = new Set([x + ',' + y]);
+      while (queue.length) {
+        const [cx, cy, d] = queue.shift();
+        open += 1;
+        if (d >= depth) continue;
+        for (const step of Object.values(DIRS)) {
+          const nx = cx + step.x;
+          const ny = cy + step.y;
+          const key = nx + ',' + ny;
+          if (seen.has(key)) continue;
+          if (nx < 0 || nx >= W || ny < 0 || ny >= H) continue;
+          if (trailMap[nx][ny] && rider.shieldUntil <= performance.now()) continue;
+          seen.add(key);
+          queue.push([nx, ny, d + 1]);
+        }
+      }
+      return open;
+    }
+
+    function moveRider(rider, now) {
+      if (!rider.alive || now < rider.moveAt) return;
+      rider.dir = rider.nextDir;
+      const step = DIRS[rider.dir];
+      const nx = rider.x + step.x;
+      const ny = rider.y + step.y;
+      const shielded = now < rider.shieldUntil;
+
+      trailMap[rider.x][rider.y] = { riderId: rider.id, color: rider.color };
+
+      if (nx < 0 || nx >= W || ny < 0 || ny >= H) {
+        if (shielded) {
+          rider.x = Math.max(0, Math.min(W - 1, nx));
+          rider.y = Math.max(0, Math.min(H - 1, ny));
+        } else {
+          killRider(rider);
+          return;
+        }
+      } else {
+        const occupying = trailMap[nx][ny];
+        if (occupying && !shielded) {
+          killRider(rider, occupying.riderId);
+          return;
+        }
+        rider.x = nx;
+        rider.y = ny;
+      }
+
+      const power = state.powerUps.find(p => p.x === rider.x && p.y === rider.y);
+      if (power) collectPowerUp(rider, power);
+
+      rider.moveAt = now + effectiveStepMs();
+    }
+
+    function update(now) {
+      if (!state.running) return;
+
+      if (now - state.lastScoreAt >= SCORE_INTERVAL) {
+        const gained = Math.floor((now - state.lastScoreAt) / SCORE_INTERVAL);
+        state.score += gained;
+        state.lastScoreAt += gained * SCORE_INTERVAL;
+      }
+
+      if (state.score >= WIN_SCORE) {
+        state.score = WIN_SCORE;
+        state.running = false;
+        state.ended = true;
+        state.won = true;
+        state.message = 'Victory // 100 points reached';
+        overlay.classList.remove('hidden');
+      }
+
+      if (now >= state.nextSpawn12At) {
+        spawnBot();
+        state.nextSpawn12At += SPAWN_12;
+      }
+      if (now >= state.nextSpawn15At) {
+        spawnBot();
+        state.nextSpawn15At += SPAWN_15;
+      }
+      if (now >= state.nextPowerAt) {
+        spawnPowerUp();
+        state.nextPowerAt = now + 5000 + Math.random() * 3500;
+      }
+
+      for (const rider of state.riders) {
+        if (!rider.isPlayer) botChooseDir(rider);
+      }
+      for (const rider of state.riders) moveRider(rider, now);
+
+      particles = particles.filter(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 1;
+        return p.life > 0;
+      });
+
+      const player = getPlayer();
+      if (!player || !player.alive) {
+        state.running = false;
+        state.ended = true;
+        state.won = false;
+        state.message = 'Tron eliminated // Press R to reset';
+        overlay.classList.remove('hidden');
+      }
+
+      banner.textContent = now < state.slowUntil ? 'Grid slowed // 10s distortion active' : state.ended ? state.message : 'Grid live // survive and cut them off';
+      updateUI(now);
+    }
+
+    function draw(now) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawArenaGlow();
+      drawTrails();
+      drawPowerUps(now);
+      drawRiders(now);
+      drawParticles();
+      drawEdgeFrame();
+    }
+
+    function drawArenaGlow() {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(92,232,255,0.12)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+      ctx.restore();
+    }
+
+    function drawTrails() {
+      for (let x = 0; x < W; x++) {
+        for (let y = 0; y < H; y++) {
+          const cell = trailMap[x][y];
+          if (!cell) continue;
+          const px = x * CELL;
+          const py = y * CELL;
+          ctx.fillStyle = cell.color;
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = cell.color;
+          ctx.fillRect(px + 1, py + 1, CELL - 2, CELL - 2);
+        }
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    function drawRiders(now) {
+      for (const rider of state.riders) {
+        if (!rider.alive) continue;
+        const px = rider.x * CELL + CELL / 2;
+        const py = rider.y * CELL + CELL / 2;
+        const shielded = now < rider.shieldUntil;
+        ctx.save();
+        if (shielded) {
+          ctx.beginPath();
+          ctx.arc(px, py, CELL * 1.15, 0, Math.PI * 2);
+          ctx.strokeStyle = '#72f1a6';
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 16;
+          ctx.shadowColor = '#72f1a6';
+          ctx.stroke();
+        }
+        ctx.fillStyle = rider.color;
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = rider.color;
+        ctx.fillRect(rider.x * CELL - 1, rider.y * CELL - 1, CELL + 2, CELL + 2);
+        ctx.restore();
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    function drawPowerUps(now) {
+      for (const power of state.powerUps) {
+        const px = power.x * CELL + CELL / 2;
+        const py = power.y * CELL + CELL / 2;
+        const pulse = 1 + Math.sin((now - power.bornAt) / 220) * 0.18;
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.scale(pulse, pulse);
+        ctx.lineWidth = 1.8;
+        ctx.shadowBlur = 14;
+        if (power.type === 'shield') {
+          ctx.strokeStyle = '#72f1a6';
+          ctx.shadowColor = '#72f1a6';
+          ctx.beginPath();
+          ctx.moveTo(0, -6);
+          ctx.lineTo(5, -4);
+          ctx.lineTo(5, 0);
+          ctx.quadraticCurveTo(5, 5, 0, 7);
+          ctx.quadraticCurveTo(-5, 5, -5, 0);
+          ctx.lineTo(-5, -4);
+          ctx.closePath();
+          ctx.stroke();
+        } else {
+          ctx.strokeStyle = '#ffd966';
+          ctx.shadowColor = '#ffd966';
+          ctx.beginPath();
+          ctx.arc(0, 1, 6, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, -7);
+          ctx.lineTo(0, -10);
+          ctx.moveTo(-3, -10);
+          ctx.lineTo(3, -10);
+          ctx.moveTo(0, 1);
+          ctx.lineTo(0, -2);
+          ctx.moveTo(0, 1);
+          ctx.lineTo(3, 3);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    function drawParticles() {
+      for (const p of particles) {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.life / 46);
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.color;
+        ctx.fillRect(p.x, p.y, 2.4, 2.4);
+      }
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+    }
+
+    function drawEdgeFrame() {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.strokeRect(8, 8, canvas.width - 16, canvas.height - 16);
+      ctx.restore();
+    }
+
+    function updateUI(now) {
+      UI.score.textContent = state.score;
+      UI.kills.textContent = state.kills;
+      UI.speedTier.textContent = Math.floor(state.kills / 2) + 1;
+      UI.baseSpeed.textContent = (BASE_STEP / baseStepMs()).toFixed(2) + 'x';
+      UI.ridersAlive.textContent = aliveRiders().length;
+      UI.spawn12.textContent = Math.max(0, (state.nextSpawn12At - now) / 1000).toFixed(1) + 's';
+      UI.spawn15.textContent = Math.max(0, (state.nextSpawn15At - now) / 1000).toFixed(1) + 's';
+      const player = getPlayer();
+      UI.shieldTime.textContent = player ? Math.max(0, (player.shieldUntil - now) / 1000).toFixed(1) + 's' : '0.0s';
+      UI.slowTime.textContent = Math.max(0, (state.slowUntil - now) / 1000).toFixed(1) + 's';
+      if (state.ended) {
+        document.querySelector('.overlay p').textContent = state.won
+          ? 'You hit 100 points and owned the arena. Press R to reboot the grid and run it again.'
+          : 'The light trail closed in. Press R to reboot the arena and try another run.';
+      }
+    }
+
+    function frame(now) {
+      if (!lastFrame) lastFrame = now;
+      update(now);
+      draw(now);
+      requestAnimationFrame(frame);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+      if (key === 'arrowup' || key === 'w') setPlayerDir('up');
+      if (key === 'arrowdown' || key === 's') setPlayerDir('down');
+      if (key === 'arrowleft' || key === 'a') setPlayerDir('left');
+      if (key === 'arrowright' || key === 'd') setPlayerDir('right');
+      if (key === 'r') resetState();
+      if (key === ' ') {
+        e.preventDefault();
+        if (!state.running && !state.ended) {
+          state.running = true;
+          overlay.classList.add('hidden');
+          state.message = 'Grid live // survive and cut them off';
+          banner.textContent = state.message;
+        }
+      }
+    });
+
+    resetState();
+    requestAnimationFrame(frame);
+  </script>
+</body>
+</html>
