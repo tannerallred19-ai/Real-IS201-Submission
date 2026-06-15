@@ -35,7 +35,7 @@ h3{text-align:left;
     display: inline-block;
     margin: 20px 0;
 }
-}
+
 h4{
     text-align:left;
     font-size:25px;
@@ -50,11 +50,18 @@ a{color:black}
 
 .images img {
     width: 600px;
-    height: 700px;
+    height: 850px;
     object-fit: cover;
     border-radius: 10px;
 }
 
 .title{
     background-color: white;
+ }
+
+ ol{
+font-weight: bold;
+ }
+ ul{
+    font-weight: lighter;
  }
